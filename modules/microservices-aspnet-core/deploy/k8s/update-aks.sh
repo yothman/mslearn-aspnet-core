@@ -31,7 +31,7 @@ fi
 echo "Updating existing AKS deployment..."
 
 # Uninstall charts to be updated
-for chart in webspa webstatus webshoppingagg
+for chart in webspa webstatus webshoppingagg coupon
 do
     echo
     echo "Uninstalling chart \"$chart\"..."

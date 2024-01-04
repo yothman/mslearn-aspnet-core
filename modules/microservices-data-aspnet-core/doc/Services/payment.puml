@@ -1,0 +1,29 @@
+@startuml Services : Payment.API
+
+class PaymentSettings as "PaymentSettings"
+class Program as "Program"
+class Startup as "Startup"
+class Configuration as "Configuration"
+class CustomExtensionMethods as "CustomExtensionMethods"
+class OrderStatusChangedToValidatedIntegrationEventHandler as "OrderStatusChangedToValidatedIntegrationEventHandler"
+interface IEventBus as "IEventBus"
+class IntegrationEvent
+note right of IntegrationEvent : From BuildingBlocks
+class OrderPaymentFailedIntegrationEvent as "OrderPaymentFailedIntegrationEvent"
+class OrderPaymentSucceededIntegrationEvent as "OrderPaymentSucceededIntegrationEvent"
+class OrderStatusChangedToValidatedIntegrationEvent as "OrderStatusChangedToValidatedIntegrationEvent"
+interface IWebHost
+
+Startup ..> Configuration
+CustomExtensionMethods ..> Configuration
+Program ..> Configuration
+
+OrderStatusChangedToValidatedIntegrationEventHandler ..> PaymentSettings
+OrderStatusChangedToValidatedIntegrationEventHandler ..> IEventBus
+
+IntegrationEvent <|-- OrderPaymentFailedIntegrationEvent
+IntegrationEvent <|-- OrderPaymentSucceededIntegrationEvent
+IntegrationEvent <|-- OrderStatusChangedToValidatedIntegrationEvent
+
+Program o-- IWebHost
+@enduml

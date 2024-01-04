@@ -1,0 +1,76 @@
+@startuml Services: Coupon.API
+
+'Top
+class CouponSetting
+
+'IntegrationEvent
+interface IIntegrationEventHandler
+class OrderStatusChangedToAwaitingCouponValidationIntegrationEventHandler
+class OrderStatusChangedToCancelledIntegrationEventHandler
+
+' class IntegrationEvent
+' class OrderCouponConfirmedIntegrationEvent
+' class OrderCouponRejectedIntegrationEvent
+' class OrderStatusChangedToAwaitingCouponValidationIntegrationEvent
+' class OrderStatusChangedToCancelledIntegrationEvent
+interface ICouponRepository
+interface IEventBus
+
+' IntegrationEvent <|-- OrderCouponConfirmedIntegrationEvent
+' IntegrationEvent <|-- OrderCouponRejectedIntegrationEvent
+' IntegrationEvent <|-- OrderStatusChangedToAwaitingCouponValidationIntegrationEvent  
+' IntegrationEvent <|-- OrderStatusChangedToCancelledIntegrationEvent
+
+IIntegrationEventHandler <|.. OrderStatusChangedToAwaitingCouponValidationIntegrationEventHandler
+IIntegrationEventHandler <|.. OrderStatusChangedToCancelledIntegrationEventHandler
+
+OrderStatusChangedToAwaitingCouponValidationIntegrationEventHandler o-- ICouponRepository
+OrderStatusChangedToAwaitingCouponValidationIntegrationEventHandler o-- IEventBus
+' OrderStatusChangedToAwaitingCouponValidationIntegrationEventHandler --> OrderStatusChangedToAwaitingCouponValidationIntegrationEvent
+' OrderStatusChangedToAwaitingCouponValidationIntegrationEventHandler --> OrderCouponConfirmedIntegrationEvent
+' OrderStatusChangedToAwaitingCouponValidationIntegrationEventHandler --> OrderCouponRejectedIntegrationEvent
+
+OrderStatusChangedToCancelledIntegrationEventHandler o-- ICouponRepository
+' OrderStatusChangedToCancelledIntegrationEventHandler --> OrderStatusChangedToCancelledIntegrationEvent
+
+'Infrastructure
+class CouponRepository
+class CouponContext
+class ICouponRepository
+class CouponSeed
+class Coupon
+interface IMongoDatabase
+
+ICouponRepository <|.. CouponRepository
+CouponRepository *-- CouponContext
+CouponContext *-- IMongoDatabase
+CouponContext "1" --> "*" Coupon
+
+'Filters
+class ValidateModelAttribute
+class ActionFilterAttribute
+class IOperationFilter
+class AuthorizeCheckOperationFilter
+
+ActionFilterAttribute <|-- ValidateModelAttribute
+IOperationFilter <|.. AuthorizeCheckOperationFilter
+
+'Extensions
+interface IHostBuilderExtensions
+interface IHost
+interface IServiceCollectionExtensions
+class Policy as "Polly.Policy"
+class DefaultServiceBusPersisterConnection
+
+IHostBuilderExtensions --> Policy
+IHostBuilderExtensions --> IHost
+
+IServiceCollectionExtensions --> CouponRepository
+IServiceCollectionExtensions --> DefaultServiceBusPersisterConnection
+IServiceCollectionExtensions --> InMemoryEventBusSubscriptionsManager
+IServiceCollectionExtensions --> CouponContext
+IServiceCollectionExtensions --> Coupon
+IServiceCollectionExtensions --> CouponDto
+IServiceCollectionExtensions --> CouponSetting
+
+@enduml

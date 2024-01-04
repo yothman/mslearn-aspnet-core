@@ -1,0 +1,59 @@
+@startuml
+
+interface IEventBusScriptionsManager
+class InMemoryEventBusSubscriptionsManager
+class SubscriptionInfo
+class GenericTypeExtensions
+class IntegrationEvent
+interface IEventBus
+interface IIntegrationEventHandler
+interface IDynamicIntegrationEventHandler
+class EventBusRabbitMQ
+interface IEventBus
+interface IDisposable
+interface IRabbitMQPersistentConnection
+class DefaultRabbitMQPersistentConnection
+class EventBusRabbitMQ
+interface IServiceBusPersisterConnection
+class EventBusServiceBus
+class SubcriptionClient
+class DefaultServiceBusPersisterConnection
+class DbContext
+class IntegrationEventLogContext
+class IntegrationEventLogEntry
+enum EventStateEnum
+class ResilientTransaction
+interface IIntergrationEventLogService
+
+
+IEventBusScriptionsManager <|-- InMemoryEventBusSubscriptionsManager
+InMemoryEventBusSubscriptionsManager o-- SubscriptionInfo
+IIntegrationEventHandler o-- IntegrationEvent
+
+IEventBus <|-- EventBusRabbitMQ
+IDisposable <|-- EventBusRabbitMQ
+IRabbitMQPersistentConnection <|-- DefaultRabbitMQPersistentConnection
+
+EventBusRabbitMQ o-- IRabbitMQPersistentConnection
+EventBusRabbitMQ o-- IEventBusScriptionsManager
+
+IDisposable <|-- IServiceBusPersisterConnection
+IEventBus <|-- EventBusServiceBus
+
+EventBusServiceBus *-- IServiceBusPersisterConnection
+EventBusServiceBus *-- IEventBusScriptionsManager
+EventBusServiceBus *-- SubcriptionClient
+
+IServiceBusPersisterConnection <|-- DefaultServiceBusPersisterConnection
+
+DbContext <|-- IntegrationEventLogContext
+
+IntegrationEventLogEntry *-- IntegrationEvent
+IntegrationEventLogEntry *-- EventStateEnum
+
+IntegrationEventLogContext "1" *-- "*" IntegrationEventLogEntry
+
+ResilientTransaction *-- DbContext
+
+
+@enduml

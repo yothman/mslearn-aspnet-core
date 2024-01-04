@@ -1,0 +1,98 @@
+@startuml
+
+'Config
+class UrlsConfig
+class CatalogOperation
+class BasketOperation
+class OrdersOperations
+
+UrlsConfig +-- CatalogOperation
+UrlsConfig +-- BasketOperation
+UrlsConfig +-- OrdersOperations
+
+'Controllers
+abstract ControllerBase
+class Controller
+class BasketController
+class CouponController
+class HomeController
+class OrderController
+interface ICatalogService
+interface IBasketService
+interface ICouponService
+interface IOrderingService
+
+ControllerBase <|-- BasketController
+ControllerBase <|-- CouponController
+Controller <|-- HomeController
+ControllerBase <|-- OrderController
+
+BasketController ..> IBasketService
+BasketController ..> ICatalogService
+
+CouponController ..> ICouponService
+
+OrderController ..> IBasketService
+OrderController ..> IOrderingService
+
+HomeController ..> RedirectResult
+
+'Filters
+class OpenApiOperation
+interface IOperationFilter
+class AuthorizeCheckOperationFilter
+class OperationFilterContext
+
+IOperationFilter <|.. AuthorizeCheckOperationFilter
+AuthorizeCheckOperationFilter ..> OpenApiOperation
+AuthorizeCheckOperationFilter ..> OperationFilterContext
+
+'Infrastructure
+class DelegatingHandler
+class HttpClientAuthorizationDelegatingHandler
+interface IHttpContextAccessor
+
+DelegatingHandler <|-- HttpClientAuthorizationDelegatingHandler
+HttpClientAuthorizationDelegatingHandler ..> IHttpContextAccessor
+
+'Models
+class AddBasketItemRequest
+class BasketData
+class BasketDataItem
+class CatalogItem
+class CouponData
+class OrderData
+class OrderItemData
+class UpdateBasketItemsRequest
+class UpdateBasketRequest
+class UpdateBasketRequestItemData
+
+BasketData "1" o-- "*" BasketDataItem
+OrderData "1" o-- "*" OrderItemData
+UpdateBasketItemsRequest "1" *-- "*" UpdateBasketItemData
+UpdateBasketRequest "1" *-- "*" UpdateBasketRequestItemData
+
+'Services
+class BasketService
+class HttpClient
+class CatalogService
+class GrpcCallerService
+class OrderApiClient
+class OrderingService
+
+IBasketService <|.. BasketService
+BasketService --> UrlsConfig
+BasketService --> HttpClient
+BasketService --> GrpcCallerService
+BasketService --> BasketData
+BasketService --> Basket
+
+ICatalogService <|.. CatalogService
+IOrderingService <|.. OrderingService
+
+
+
+
+
+
+@enduml
